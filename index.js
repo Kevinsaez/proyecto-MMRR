@@ -83,7 +83,12 @@ function agregarImagenes() {
         });
     }
 }
+function recargar() {
+    setTimeout(() => {
 
+        location.reload(); // Recarga la página después de generar el PDF
+    }, 5000);
+}
 
 function generarPDF() {
     const { jsPDF } = window.jspdf;
@@ -122,8 +127,5 @@ function generarPDF() {
 
         doc.save("trabajos_material_rodante.pdf");
     });
-    setTimeout(() => {
 
-        location.reload(); // Recarga la página después de generar el PDF
-    }, 5000);
 }
