@@ -1,0 +1,44 @@
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generar PDF</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="./style.css">
+
+</head>
+
+<body class="container text-center">
+    <h2 class="my-4">Informes Material Rodante</h2>
+    <div class="mb-3">
+        <label class="form-label">Selecciona Taller:</label>
+        <select class="form-control" id="tallerSelect">
+            <option value="Taller de Locomotoras">Taller de Locomotoras</option>
+            <option value="Taller de Coches">Taller de Coches</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Trabajo Realizado:</label>
+        <input type="text" class="form-control" id="trabajoRealizado" placeholder="Escribe el trabajo realizado">
+    </div>
+    <div class="mb-3">
+        <input type="file" class="form-control" id="imagenInput" accept="image/*" multiple>
+    </div>
+    <div class="mb-3">
+        <input type="text" class="form-control" id="leyendaInput" placeholder="Escribe una leyenda">
+    </div>
+    <button class="btn btn-primary mb-3" onclick="agregarImagenes()">Agregar</button>
+    <div id="contenido" class="border p-3 grid-container"></div>
+    <button class="btn btn-success mt-3" onclick="generarPDF()">Generar PDF</button>
+
+    <footer class="footer">
+        <p>© Derechos del desarrollador</p>
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="./index.js"></script>
+</body>
+
+</html>
