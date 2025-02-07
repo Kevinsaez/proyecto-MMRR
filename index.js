@@ -125,5 +125,5 @@ function generarPDF() {
     setTimeout(() => {
 
         location.reload(); // Recarga la página después de generar el PDF
-    }, 2000);
+    }, 5000);
 }
