@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function mostrarLogin() {
         document.body.innerHTML = `
-            <div class='container text-center'>
+            <div class='container text-center login'>
                 <h2 class='my-4'>Iniciar Sesión</h2>
                 <div class='mb-3'>
                     <input type='text' id='usuario' class='form-control' placeholder='Usuario'>
@@ -87,7 +87,7 @@ function recargar() {
     setTimeout(() => {
 
         location.reload(); // Recarga la página después de generar el PDF
-    }, 5000);
+    }, 1000);
 }
 
 function generarPDF() {
@@ -99,19 +99,32 @@ function generarPDF() {
     const trabajo = document.getElementById("trabajoRealizado").value;
     const leyenda = document.getElementById("leyendaInput").value;
 
+    // Establecer el color de fondo de toda la página
+    doc.setFillColor(230, 230, 250); // Color lavanda
+    doc.rect(0, 0, 210, 297, 'F');  // Cubre toda la página A4 (210x297 mm)
+
     // Encabezado con imagen y texto
     const imgHeader = new Image();
     imgHeader.src = './img/Trenes_arg_operac_logo.png';
     doc.addImage(imgHeader, "PNG", 10, 5, 30, 15);
     doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
     doc.text("Trenes Argentinos - Áreas Complementarias", 50, 15);
 
+    // Dibujar un contenedor con fondo y bordes redondeados en el PDF
+    const x = 10, y = 30, width = 190, height = 45, radius = 5;
+
+    doc.setFillColor(255, 255, 255); // Fondo blanco para el contenedor
+    doc.setDrawColor(0, 0, 0); // Color del borde (negro)
+    doc.roundedRect(x, y, width, height, radius, radius, 'FD'); // 'FD' significa "Fill & Draw"
+
+    // Texto dentro del contenedor
     doc.setFontSize(16);
-    doc.text(titulo, 10, 30);
+    doc.text(titulo, x + 5, y + 10);
     doc.setFontSize(12);
-    doc.text(`Taller: ${taller}`, 10, 40);
-    doc.text(`Trabajo Realizado: ${trabajo}`, 10, 50);
-    doc.text(`Leyenda: ${leyenda}`, 10, 60);
+    doc.text(`Taller: ${taller}`, x + 5, y + 20);
+    doc.text(`Trabajo Realizado: ${trabajo}`, x + 5, y + 30);
+    doc.text(`Leyenda: ${leyenda}`, x + 5, y + 40);
 
     const elemento = document.getElementById("contenido");
     html2canvas(elemento, { scale: 1.5 }).then(canvas => {
@@ -119,7 +132,7 @@ function generarPDF() {
         const imgWidth = 190;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-        doc.addImage(imgData, "JPEG", 10, 70, imgWidth, imgHeight);
+        doc.addImage(imgData, "JPEG", 10, 80, imgWidth, imgHeight);
 
         // Pie de página con derechos del desarrollador
         doc.setFontSize(10);
@@ -127,5 +140,4 @@ function generarPDF() {
 
         doc.save("trabajos_material_rodante.pdf");
     });
-
 }
