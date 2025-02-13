@@ -1,83 +1,179 @@
- * {
-     margin: 0;
-     padding: 0;
-     box-sizing: border-box;
- }
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&family=Signika+Negative:wght@300..700&display=swap');
+
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-optical-sizing: auto;
+}
+
+/* Estilos generales */
+body {
+    background: #3674B5;
+    font-family: Arial, sans-serif;
+}
+
+/* Etiquetas */
+label {
+    color: aliceblue;
+}
+
+.titulo {
+    color: azure;
+}
+
+/* Estilos de login */
+.login {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+
+.login h2 {
+    color: #fff;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Contenedor general de imágenes */
+#contenido {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* 3 imágenes por fila */
+    gap: 10px;
+    justify-content: center;
+    padding: 20px;
+    max-width: 900px;
+    /* Para evitar que el contenedor se expanda demasiado */
+    margin: auto;
+}
+
+/* Contenedor de cada imagen */
+.imagen-contenedor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 8px;
+    background: #6ad1aa;
+    width: 100%;
+    height: 220px;
+    /* Altura fija para mantener proporción */
+    overflow: hidden;
+    position: relative;
+}
+
+/* Ajuste de la imagen dentro del contenedor */
+.imagen-contenedor img {
+    width: 100%;
+    height: auto;
+    max-height: 200px;
+    object-fit: contain;
+    transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
+}
+
+/* Rotación del contenedor junto con la imagen */
+.imagen-contenedor.rotated-90,
+.imagen-contenedor.rotated-270 {
+    width: 220px;
+    /* Ajuste de ancho para imágenes en vertical */
+    height: 150px;
+    /* Mantiene el espacio sin romper la cuadrícula */
+}
+
+/* Rotaciones de la imagen */
+.imagen-contenedor img.rotated-90 {
+    transform: rotate(90deg);
+}
+
+.imagen-contenedor img.rotated-180 {
+    transform: rotate(180deg);
+}
+
+.imagen-contenedor img.rotated-270 {
+    transform: rotate(270deg);
+}
+
+/* Botón para rotar la imagen */
+.btn-rotate {
+    margin-top: auto;
+    padding: 5px 10px;
+    background: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: background 0.3s ease;
+    position: absolute;
+    bottom: 5px;
+}
+
+.btn-rotate:hover {
+    background: #0a4f99;
+}
+
+.footer {
+    background-color: #09122C;
+    color: #fff;
+    border-radius: 15px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    align-items: center;
+    padding: 10px;
+}
+
+.derechos-autor {
+    color: #fff;
+    padding: 10px;
+    margin: 10px;
+}
 
 
- label {
-     color: aliceblue;
- }
+.iconos-redes a {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    margin: 20px;
+    border: 2px solid white;
+    border-radius: 50%;
+    transition: all 0.2s ease-in;
+}
 
- body {
-     background: #0340c4;
- }
+.iconos-redes i {
+    color: white;
+    font-size: 1.5rem;
+    transition: all 0.2s ease-in;
 
- .login {
-     display: flex;
-     flex-direction: column;
-     width: 100vw;
-     height: 100vh;
-     justify-content: center;
-     align-items: center;
+}
 
- }
+.iconos-redes a:hover {
+    background-color: white;
+    border: 2px solid black;
+}
 
- .login h2 {
-     color: #fff;
-     font-size: 2.5rem;
-     margin-bottom: 1rem;
- }
+.iconos-redes a:hover i {
+    color: black;
+}
 
- .imagen-contenedor {
-     border: 2px solid #000;
-     padding: 5px;
-     border-radius: 5px;
-     background-color: #060607;
-     margin-bottom: auto;
-     text-align: center;
-     justify-content: center;
+/* Media Queries para responsive */
+@media (max-width: 600px) {
+    #contenido {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
 
- }
-
- .grid-container {
-     display: grid;
-     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-     gap: 15px;
- }
-
- .imagen-contenedor img {
-     max-width: 100%;
-     height: auto;
- }
-
- .titulo {
-     font-size: 30px;
-     font-weight: bold;
-     text-align: center;
-     margin-bottom: 10px;
-     color: aliceblue;
- }
-
- .footer {
-     text-align: center;
-     margin-top: 20px;
-     margin-bottom: 20px;
-     padding: 10px;
-     background-color: #40ca00;
-     border-top: 4px solid #000;
-     border-radius: 5px;
- }
-
- #contenido {
-     border-radius: 10px;
-     background-color: #1493c5;
- }
-
- /* media query */
-
- @media (max-width: 400px) {
-     .grid-container {
-         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-     }
- }
+@media (max-width: 400px) {
+    #contenido {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
