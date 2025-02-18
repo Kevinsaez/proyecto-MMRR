@@ -138,8 +138,13 @@ function generarPDF() {
     doc.text(`Trabajo Realizado: ${trabajo}`, 10, 50);
     doc.text(`Leyenda: ${leyenda}`, 10, 60);
 
-    let x = 10, y = 80;
     const maxWidth = 60, maxHeight = 50, espacio = 10;
+    const margenIzquierdo = 10;
+    const margenDerecho = 10;
+    const anchoPagina = doc.internal.pageSize.getWidth();
+    const anchoContenido = maxWidth * 3 + espacio * 2;
+    const xInicial = (anchoPagina - anchoContenido) / 2;
+    let x = xInicial, y = 80;
     let count = 0;
 
     const imagenes = document.querySelectorAll(".imagen-contenedor img");
@@ -169,14 +174,14 @@ function generarPDF() {
             }
 
             // Convertir imagen con calidad y rotación
-            const imgData = await convertirImagenConRotacion(img, rotation, maxWidth * 4, maxHeight * 4, 0.95);
+            const imgData = await convertirImagenConRotacion(img, rotation, maxWidth * 4, maxHeight * 4, 1);
             doc.addImage(imgData, "WEBP", x, y, maxWidth, maxHeight);
 
             x += maxWidth + espacio;
             count++;
 
             if (count === 3) {
-                x = 10;
+                x = xInicial;
                 y += maxHeight + espacio;
                 count = 0;
             }
@@ -184,17 +189,17 @@ function generarPDF() {
             if (y + maxHeight > 280) {
                 doc.addPage();
                 y = 20;
+                x = xInicial;
             }
         }
 
         doc.setFontSize(10);
-        doc.text("© Derechos del desarrollador", 10, 290);
+        doc.text("Creado por Kevin E. Saez (2025) ©", 10, 290);
         doc.save("trabajos_material_rodante.pdf");
     };
 
     procesarImagenes();
 }
-
 
 async function convertirImagenConRotacion(img, rotation, canvasWidth, canvasHeight, quality) {
     return new Promise((resolve) => {
@@ -224,11 +229,11 @@ async function convertirImagenConRotacion(img, rotation, canvasWidth, canvasHeig
             ctx.rotate((rotation * Math.PI) / 180);
             ctx.drawImage(imgObj, -finalWidth / 2, -finalHeight / 2, finalWidth, finalHeight);
 
-            resolve(canvas.toDataURL("image/webp", quality));
+            // Ajusta la calidad de compresión al 1 (máxima calidad)
+            resolve(canvas.toDataURL("image/webp", 1));
         };
     });
 }
-
 
 
 // ---------------------- [ RECARGAR PÁGINA ] ----------------------
