@@ -212,7 +212,8 @@ async function convertirImagenConRotacion(img, rotation, canvasWidth, canvasHeig
             const naturalWidth = imgObj.naturalWidth;
             const naturalHeight = imgObj.naturalHeight;
 
-            const scaleFactor = Math.min(canvasWidth / naturalWidth, canvasHeight / naturalHeight);
+            // Aumentar la resolución del canvas
+            const scaleFactor = Math.min(canvasWidth / naturalWidth, canvasHeight / naturalHeight) * 2;
             const finalWidth = naturalWidth * scaleFactor;
             const finalHeight = naturalHeight * scaleFactor;
 
@@ -234,7 +235,6 @@ async function convertirImagenConRotacion(img, rotation, canvasWidth, canvasHeig
         };
     });
 }
-
 
 // ---------------------- [ RECARGAR PÁGINA ] ----------------------
 function recargar() {
