@@ -118,105 +118,105 @@ function rotarImagen(img) {
 // ---------------------- [ GENERAR PDF ] ----------------------
 function generarPDF() {
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF('p', 'mm', 'a4');
+    const doc = new jsPDF("p", "mm", "a4");
 
+    // Dimensiones de la página y márgenes
+    const anchoPagina = doc.internal.pageSize.getWidth();
+    const margenIzquierdo = 15; // Asegura un margen uniforme en ambos lados
+    const maxWidth = 60, maxHeight = 50;
+    const espacio = 10;
+    const imagenesPorFila = 3;
+
+    // Capturar valores de los inputs para el encabezado
     const titulo = "Trabajos en Material Rodante";
     const taller = document.getElementById("tallerSelect").value;
     const trabajo = document.getElementById("trabajoRealizado").value;
     const leyenda = document.getElementById("leyendaInput").value;
 
+    // Cargar imagen de encabezado
     const imgHeader = new Image();
     imgHeader.src = './img/Trenes_arg_operac_logo.png';
-    doc.addImage(imgHeader, "PNG", 10, 5, 30, 15);
-    doc.setFontSize(14);
-    doc.text("Trenes Argentinos - Áreas Complementarias", 50, 15);
 
-    doc.setFontSize(16);
-    doc.text(titulo, 10, 30);
-    doc.setFontSize(12);
-    doc.text(`Taller: ${taller}`, 10, 40);
-    doc.text(`Trabajo Realizado: ${trabajo}`, 10, 50);
-    doc.text(`Leyenda: ${leyenda}`, 10, 60);
+    imgHeader.onload = function () {
+        doc.addImage(imgHeader, "PNG", 10, 5, 30, 15);
+        doc.setFontSize(14);
+        doc.text("Trenes Argentinos - Áreas Complementarias", 50, 15);
 
-    const maxWidth = 60, maxHeight = 50, espacio = 10;
-    const margenIzquierdo = 10;
-    const margenDerecho = 10;
-    const anchoPagina = doc.internal.pageSize.getWidth();
-    const anchoContenido = maxWidth * 3 + espacio * 2;
-    const xInicial = (anchoPagina - anchoContenido) / 2;
-    let x = xInicial, y = 80;
-    let count = 0;
+        doc.setFontSize(16);
+        doc.text(titulo, margenIzquierdo, 30);
+        doc.setFontSize(12);
+        doc.text(`Taller: ${taller}`, margenIzquierdo, 40);
+        doc.text(`Trabajo Realizado: ${trabajo}`, margenIzquierdo, 50);
+        doc.text(`Leyenda: ${leyenda}`, margenIzquierdo, 60);
 
-    const imagenes = document.querySelectorAll(".imagen-contenedor img");
+        // Capturar imágenes sin los botones de rotación
+        const imagenes = document.querySelectorAll(".imagen-contenedor img");
 
-    const procesarImagenes = async () => {
-        for (let img of imagenes) {
-            const contenedor = img.parentElement;
-            const bgColor = window.getComputedStyle(contenedor).backgroundColor;
-            const borderColor = window.getComputedStyle(contenedor).borderColor;
-            const borderWidth = parseInt(window.getComputedStyle(contenedor).borderWidth) || 2;
-
-            const rgb = bgColor.match(/\d+/g);
-            const borderRgb = borderColor.match(/\d+/g);
-            const rotation = parseInt(img.getAttribute("data-rotation")) || 0;
-
-            // Dibujar fondo de color del contenedor
-            if (rgb) {
-                doc.setFillColor(parseInt(rgb[0]), parseInt(rgb[1]), parseInt(rgb[2]));
-                doc.rect(x, y, maxWidth, maxHeight, "F");
-            }
-
-            // Dibujar borde del contenedor
-            if (borderRgb) {
-                doc.setDrawColor(parseInt(borderRgb[0]), parseInt(borderRgb[1]), parseInt(borderRgb[2]));
-                doc.setLineWidth(borderWidth / 2);
-                doc.rect(x, y, maxWidth, maxHeight, "S");
-            }
-
-            // Convertir imagen con calidad y rotación
-            const imgData = await convertirImagenConRotacion(img, rotation, maxWidth * 4, maxHeight * 4, 1);
-            doc.addImage(imgData, "WEBP", x, y, maxWidth, maxHeight);
-
-            x += maxWidth + espacio;
-            count++;
-
-            if (count === 3) {
-                x = xInicial;
-                y += maxHeight + espacio;
-                count = 0;
-            }
-
-            if (y + maxHeight > 280) {
-                doc.addPage();
-                y = 20;
-                x = xInicial;
-            }
+        if (imagenes.length === 0) {
+            alert("No hay imágenes para generar el PDF.");
+            return;
         }
 
-        doc.setFontSize(10);
-        doc.text("Creado por Kevin E. Saez (2025) ©", 10, 290);
-        doc.save("trabajos_material_rodante.pdf");
-    };
+        // Calcular el ancho total del bloque de imágenes para centrarlo
+        const anchoTotalImagenes = imagenesPorFila * maxWidth + (imagenesPorFila - 1) * espacio;
+        const xInicial = (anchoPagina - anchoTotalImagenes) / 2; // Cálculo para centrar
 
-    procesarImagenes();
+        let x = xInicial, y = 70;
+        let count = 0;
+
+        // Procesar imágenes una por una
+        const procesarImagenes = async () => {
+            for (let img of imagenes) {
+                const rotation = parseInt(img.getAttribute("data-rotation")) || 0;
+
+                // Convertir imagen con calidad y sin deformación
+                const imgData = await convertirImagenConRotacion(img, rotation, maxWidth * 4, maxHeight * 4, 1);
+                doc.addImage(imgData, "WEBP", x, y, maxWidth, maxHeight);
+
+                x += maxWidth + espacio;
+                count++;
+
+                if (count === imagenesPorFila) { // Si se completa una fila
+                    x = xInicial;
+                    y += maxHeight + espacio;
+                    count = 0;
+                }
+
+                // Agregar nueva página si no cabe más contenido
+                if (y + maxHeight > 280) {
+                    doc.addPage();
+                    y = 20;
+                    x = xInicial;
+                }
+            }
+
+            doc.save("trabajos_material_rodante.pdf");
+        };
+
+        procesarImagenes();
+    };
 }
 
+// Función para convertir imágenes sin deformaciones y con rotación
 async function convertirImagenConRotacion(img, rotation, canvasWidth, canvasHeight, quality) {
     return new Promise((resolve) => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
         const imgObj = new Image();
+        imgObj.crossOrigin = "anonymous"; // Solución para imágenes de diferentes fuentes en mobile
         imgObj.src = img.src;
+
         imgObj.onload = function () {
             const naturalWidth = imgObj.naturalWidth;
             const naturalHeight = imgObj.naturalHeight;
 
-            // Aumentar la resolución del canvas
-            const scaleFactor = Math.min(canvasWidth / naturalWidth, canvasHeight / naturalHeight) * 2;
-            const finalWidth = naturalWidth * scaleFactor;
-            const finalHeight = naturalHeight * scaleFactor;
+            // Adaptar la calidad para móviles (escalar según la pantalla)
+            const scaleFactor = Math.min(canvasWidth / naturalWidth, canvasHeight / naturalHeight);
+            const finalWidth = naturalWidth * scaleFactor * (window.devicePixelRatio || 1); // Mayor nitidez en pantallas HD
+            const finalHeight = naturalHeight * scaleFactor * (window.devicePixelRatio || 1);
 
+            // Ajustamos el canvas según la rotación
             if (rotation === 90 || rotation === 270) {
                 canvas.width = finalHeight;
                 canvas.height = finalWidth;
@@ -225,16 +225,20 @@ async function convertirImagenConRotacion(img, rotation, canvasWidth, canvasHeig
                 canvas.height = finalHeight;
             }
 
+            // Dibujar imagen con alta calidad
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.translate(canvas.width / 2, canvas.height / 2);
             ctx.rotate((rotation * Math.PI) / 180);
             ctx.drawImage(imgObj, -finalWidth / 2, -finalHeight / 2, finalWidth, finalHeight);
 
-            // Ajusta la calidad de compresión al 1 (máxima calidad)
-            resolve(canvas.toDataURL("image/webp", 1));
+            // Convertir la imagen con calidad máxima (PNG o WebP según el dispositivo)
+            const format = navigator.userAgent.includes("iPhone") || navigator.userAgent.includes("Safari") ? "image/png" : "image/webp";
+            resolve(canvas.toDataURL(format, 1.0));
         };
     });
 }
+
+
 
 // ---------------------- [ RECARGAR PÁGINA ] ----------------------
 function recargar() {
