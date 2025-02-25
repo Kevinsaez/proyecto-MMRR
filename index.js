@@ -120,20 +120,21 @@ function generarPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF("p", "mm", "a4");
 
-    // Dimensiones de la página y márgenes
+    // Mostrar la barra de progreso
+    document.getElementById("progressContainer").style.display = "block";
+    const progressBar = document.getElementById("progressBar");
+
     const anchoPagina = doc.internal.pageSize.getWidth();
-    const margenIzquierdo = 15; // Asegura un margen uniforme en ambos lados
+    const margenIzquierdo = 15;
     const maxWidth = 60, maxHeight = 50;
     const espacio = 10;
     const imagenesPorFila = 3;
 
-    // Capturar valores de los inputs para el encabezado
     const titulo = "Trabajos en Material Rodante";
     const taller = document.getElementById("tallerSelect").value;
     const trabajo = document.getElementById("trabajoRealizado").value;
     const leyenda = document.getElementById("leyendaInput").value;
 
-    // Cargar imagen de encabezado
     const imgHeader = new Image();
     imgHeader.src = './img/Trenes_arg_operac_logo.png';
 
@@ -149,40 +150,40 @@ function generarPDF() {
         doc.text(`Trabajo Realizado: ${trabajo}`, margenIzquierdo, 50);
         doc.text(`Leyenda: ${leyenda}`, margenIzquierdo, 60);
 
-        // Capturar imágenes sin los botones de rotación
         const imagenes = document.querySelectorAll(".imagen-contenedor img");
 
         if (imagenes.length === 0) {
             alert("No hay imágenes para generar el PDF.");
+            document.getElementById("progressContainer").style.display = "none";
             return;
         }
 
-        // Calcular el ancho total del bloque de imágenes para centrarlo
         const anchoTotalImagenes = imagenesPorFila * maxWidth + (imagenesPorFila - 1) * espacio;
-        const xInicial = (anchoPagina - anchoTotalImagenes) / 2; // Cálculo para centrar
-
+        const xInicial = (anchoPagina - anchoTotalImagenes) / 2;
         let x = xInicial, y = 70;
         let count = 0;
+        let totalImagenes = imagenes.length;
+        let procesadas = 0;
 
-        // Procesar imágenes una por una
         const procesarImagenes = async () => {
             for (let img of imagenes) {
                 const rotation = parseInt(img.getAttribute("data-rotation")) || 0;
-
-                // Convertir imagen con calidad y sin deformación
                 const imgData = await convertirImagenConRotacion(img, rotation, maxWidth * 4, maxHeight * 4, 1);
                 doc.addImage(imgData, "WEBP", x, y, maxWidth, maxHeight);
 
                 x += maxWidth + espacio;
                 count++;
+                procesadas++;
 
-                if (count === imagenesPorFila) { // Si se completa una fila
+                // Actualizar barra de progreso
+                progressBar.value = (procesadas / totalImagenes) * 100;
+
+                if (count === imagenesPorFila) {
                     x = xInicial;
                     y += maxHeight + espacio;
                     count = 0;
                 }
 
-                // Agregar nueva página si no cabe más contenido
                 if (y + maxHeight > 280) {
                     doc.addPage();
                     y = 20;
@@ -190,6 +191,8 @@ function generarPDF() {
                 }
             }
 
+            // Ocultar barra y descargar PDF
+            document.getElementById("progressContainer").style.display = "none";
             doc.save("trabajos_material_rodante.pdf");
         };
 
@@ -197,26 +200,28 @@ function generarPDF() {
     };
 }
 
+
 // Función para convertir imágenes sin deformaciones y con rotación
-async function convertirImagenConRotacion(img, rotation, canvasWidth, canvasHeight, quality) {
+async function convertirImagenConRotacion(img, rotation, canvasWidth, canvasHeight) {
     return new Promise((resolve) => {
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
         const imgObj = new Image();
-        imgObj.crossOrigin = "anonymous"; // Solución para imágenes de diferentes fuentes en mobile
+        imgObj.crossOrigin = "anonymous";
         imgObj.src = img.src;
 
         imgObj.onload = function () {
             const naturalWidth = imgObj.naturalWidth;
             const naturalHeight = imgObj.naturalHeight;
 
-            // Adaptar la calidad para móviles (escalar según la pantalla)
+            // Usar la resolución original de la imagen para mayor claridad
             const scaleFactor = Math.min(canvasWidth / naturalWidth, canvasHeight / naturalHeight);
-            const finalWidth = naturalWidth * scaleFactor * (window.devicePixelRatio || 1); // Mayor nitidez en pantallas HD
-            const finalHeight = naturalHeight * scaleFactor * (window.devicePixelRatio || 1);
+            const dpiFactor = Math.max(2, window.devicePixelRatio || 2);
 
-            // Ajustamos el canvas según la rotación
+            const finalWidth = naturalWidth * scaleFactor * dpiFactor;
+            const finalHeight = naturalHeight * scaleFactor * dpiFactor;
+
             if (rotation === 90 || rotation === 270) {
                 canvas.width = finalHeight;
                 canvas.height = finalWidth;
@@ -225,18 +230,27 @@ async function convertirImagenConRotacion(img, rotation, canvasWidth, canvasHeig
                 canvas.height = finalHeight;
             }
 
-            // Dibujar imagen con alta calidad
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = "high";
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.translate(canvas.width / 2, canvas.height / 2);
             ctx.rotate((rotation * Math.PI) / 180);
+
+            // Dibujar la imagen con interpolación de calidad
             ctx.drawImage(imgObj, -finalWidth / 2, -finalHeight / 2, finalWidth, finalHeight);
 
-            // Convertir la imagen con calidad máxima (PNG o WebP según el dispositivo)
-            const format = navigator.userAgent.includes("iPhone") || navigator.userAgent.includes("Safari") ? "image/png" : "image/webp";
-            resolve(canvas.toDataURL(format, 1.0));
+            // Convertir a imagen WebP o PNG con calidad alta
+            resolve(canvas.toDataURL("image/webp", 1.0));
+        };
+
+        imgObj.onerror = function () {
+            console.error("Error cargando la imagen.");
+            resolve(null);
         };
     });
 }
+
 
 
 
