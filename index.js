@@ -126,9 +126,10 @@ function generarPDF() {
 
     const anchoPagina = doc.internal.pageSize.getWidth();
     const margenIzquierdo = 15;
-    const maxWidth = 70, maxHeight = 60;
+    const maxWidth = 65, maxHeight = 50; // Tamaño optimizado para 4 filas
     const espacio = 5;
     const imagenesPorFila = 3;
+    const filasPorPagina = 4; // Ahora se muestran 4 filas por página
 
     const titulo = "Trabajos en Material Rodante";
     const taller = document.getElementById("tallerSelect").value;
@@ -193,6 +194,7 @@ function generarPDF() {
         let count = 0;
         let totalImagenes = imagenes.length;
         let procesadas = 0;
+        let filasEnPagina = 0;
 
         const procesarImagenes = async () => {
             for (let img of imagenes) {
@@ -220,12 +222,14 @@ function generarPDF() {
 
                 if (count === imagenesPorFila) {
                     x = xInicial;
-                    y += maxHeight + espacio + 5;
+                    y += maxHeight + espacio + 2; // Ajuste fino para evitar espacios innecesarios
                     count = 0;
+                    filasEnPagina++;
                 }
 
-                if (y + maxHeight > 280) {
+                if (filasEnPagina === filasPorPagina) {
                     doc.addPage();
+                    filasEnPagina = 0;
                     y = 20;
                     x = xInicial;
                 }
