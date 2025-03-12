@@ -139,16 +139,45 @@ function generarPDF() {
     imgHeader.src = './img/Trenes_arg_operac_logo.png';
 
     imgHeader.onload = function () {
+        // Fondo del encabezado
+        doc.setFillColor(30, 144, 255); // Azul vibrante
+        doc.rect(0, 0, 210, 25, "F");
+
+        // Agregar logo
         doc.addImage(imgHeader, "PNG", 10, 5, 30, 15);
+
+        // Título principal
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(255, 255, 255); // Blanco
         doc.setFontSize(14);
         doc.text("Trenes Argentinos - Áreas Complementarias", 50, 15);
 
+        // Línea divisoria
+        doc.setDrawColor(0);
+        doc.setLineWidth(0.5);
+        doc.line(10, 27, 200, 27);
+
+        // Título de la sección
+        doc.setTextColor(0, 0, 0);
         doc.setFontSize(16);
-        doc.text(titulo, margenIzquierdo, 25);
+        doc.text(titulo, margenIzquierdo, 35);
+
+        // Detalles del taller y trabajo
         doc.setFontSize(12);
-        doc.text(`Taller: ${taller}`, margenIzquierdo, 32);
-        doc.text(`Trabajo Realizado: ${trabajo}`, margenIzquierdo, 38);
-        doc.text(`Leyenda: ${leyenda}`, margenIzquierdo, 44);
+        doc.setTextColor(0, 102, 204);
+        doc.text(`Taller:`, margenIzquierdo, 45);
+        doc.setTextColor(0, 0, 0);
+        doc.text(taller, margenIzquierdo + 20, 45);
+
+        doc.setTextColor(0, 102, 204);
+        doc.text(`Trabajo Realizado:`, margenIzquierdo, 51);
+        doc.setTextColor(0, 0, 0);
+        doc.text(trabajo, margenIzquierdo + 40, 51);
+
+        doc.setTextColor(0, 102, 204);
+        doc.text(`Leyenda:`, margenIzquierdo, 57);
+        doc.setTextColor(0, 0, 0);
+        doc.text(leyenda, margenIzquierdo + 20, 57);
 
         const imagenes = document.querySelectorAll(".imagen-contenedor img");
 
@@ -160,7 +189,7 @@ function generarPDF() {
 
         const anchoTotalImagenes = imagenesPorFila * maxWidth + (imagenesPorFila - 1) * espacio;
         const xInicial = (anchoPagina - anchoTotalImagenes) / 2;
-        let x = xInicial, y = 50;
+        let x = xInicial, y = 65;
         let count = 0;
         let totalImagenes = imagenes.length;
         let procesadas = 0;
@@ -169,6 +198,17 @@ function generarPDF() {
             for (let img of imagenes) {
                 const rotation = parseInt(img.getAttribute("data-rotation")) || 0;
                 const imgData = await convertirImagenConRotacion(img, rotation, maxWidth * 4, maxHeight * 4, 1);
+
+                // Fondo de imagen
+                doc.setFillColor(230, 230, 230);
+                doc.rect(x - 3, y - 3, maxWidth + 6, maxHeight + 6, "F");
+
+                // Marco de imagen
+                doc.setDrawColor(30, 144, 255);
+                doc.setLineWidth(1);
+                doc.rect(x - 2, y - 2, maxWidth + 4, maxHeight + 4);
+
+                // Agregar imagen
                 doc.addImage(imgData, "WEBP", x, y, maxWidth, maxHeight);
 
                 x += maxWidth + espacio;
@@ -180,7 +220,7 @@ function generarPDF() {
 
                 if (count === imagenesPorFila) {
                     x = xInicial;
-                    y += maxHeight + espacio;
+                    y += maxHeight + espacio + 5;
                     count = 0;
                 }
 
@@ -190,6 +230,13 @@ function generarPDF() {
                     x = xInicial;
                 }
             }
+
+            // Pie de página
+            doc.setFillColor(30, 144, 255);
+            doc.rect(0, 285, 210, 15, "F");
+            doc.setFontSize(10);
+            doc.setTextColor(255, 255, 255);
+            doc.text("Documento generado automáticamente por el sistema", 60, 294);
 
             // Ocultar barra y descargar PDF
             document.getElementById("progressContainer").style.display = "none";
