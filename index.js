@@ -126,8 +126,8 @@ function generarPDF() {
 
     const anchoPagina = doc.internal.pageSize.getWidth();
     const margenIzquierdo = 15;
-    const maxWidth = 60, maxHeight = 50;
-    const espacio = 10;
+    const maxWidth = 70, maxHeight = 60;
+    const espacio = 5;
     const imagenesPorFila = 3;
 
     const titulo = "Trabajos en Material Rodante";
@@ -144,11 +144,11 @@ function generarPDF() {
         doc.text("Trenes Argentinos - Áreas Complementarias", 50, 15);
 
         doc.setFontSize(16);
-        doc.text(titulo, margenIzquierdo, 30);
+        doc.text(titulo, margenIzquierdo, 25);
         doc.setFontSize(12);
-        doc.text(`Taller: ${taller}`, margenIzquierdo, 40);
-        doc.text(`Trabajo Realizado: ${trabajo}`, margenIzquierdo, 50);
-        doc.text(`Leyenda: ${leyenda}`, margenIzquierdo, 60);
+        doc.text(`Taller: ${taller}`, margenIzquierdo, 32);
+        doc.text(`Trabajo Realizado: ${trabajo}`, margenIzquierdo, 38);
+        doc.text(`Leyenda: ${leyenda}`, margenIzquierdo, 44);
 
         const imagenes = document.querySelectorAll(".imagen-contenedor img");
 
@@ -160,7 +160,7 @@ function generarPDF() {
 
         const anchoTotalImagenes = imagenesPorFila * maxWidth + (imagenesPorFila - 1) * espacio;
         const xInicial = (anchoPagina - anchoTotalImagenes) / 2;
-        let x = xInicial, y = 70;
+        let x = xInicial, y = 50;
         let count = 0;
         let totalImagenes = imagenes.length;
         let procesadas = 0;
