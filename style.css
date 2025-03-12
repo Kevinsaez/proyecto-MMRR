@@ -41,10 +41,10 @@ label {
 
 /* Contenedor general de imágenes */
 #contenido {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     /* 3 imágenes por fila */
-    gap: 15px;
+    gap: 10px;
     justify-content: center;
     padding: 20px;
     max-width: 900px;
@@ -52,6 +52,7 @@ label {
     margin: auto;
 }
 
+/* Contenedor de cada imagen */
 .imagen-contenedor {
     display: flex;
     flex-direction: column;
@@ -61,8 +62,8 @@ label {
     padding: 10px;
     border-radius: 8px;
     background: #6ad1aa;
-    width: auto;
-    height: auto;
+    width: 100%;
+    height: 220px;
     /* Altura fija para mantener proporción */
     overflow: hidden;
     position: relative;
@@ -71,7 +72,7 @@ label {
 /* Ajuste de la imagen dentro del contenedor */
 .imagen-contenedor img {
     width: 100%;
-    height: 100%;
+    height: auto;
     max-height: 200px;
     object-fit: contain;
     transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
@@ -80,9 +81,9 @@ label {
 /* Rotación del contenedor junto con la imagen */
 .imagen-contenedor.rotated-90,
 .imagen-contenedor.rotated-270 {
-    width: auto;
+    width: 220px;
     /* Ajuste de ancho para imágenes en vertical */
-    height: auto;
+    height: 150px;
     /* Mantiene el espacio sin romper la cuadrícula */
 }
 

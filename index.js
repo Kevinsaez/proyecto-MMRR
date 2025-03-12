@@ -126,9 +126,9 @@ function generarPDF() {
 
     const anchoPagina = doc.internal.pageSize.getWidth();
     const margenIzquierdo = 15;
-    const maxWidth = 70, maxHeight = 60;
-    const espacio = 15;
-    const imagenesPorFila = 2;
+    const maxWidth = 60, maxHeight = 50;
+    const espacio = 10;
+    const imagenesPorFila = 3;
 
     const titulo = "Trabajos en Material Rodante";
     const taller = document.getElementById("tallerSelect").value;
