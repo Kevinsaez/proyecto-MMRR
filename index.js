@@ -240,7 +240,7 @@ function generarPDF() {
             doc.rect(0, 285, 210, 15, "F");
             doc.setFontSize(10);
             doc.setTextColor(255, 255, 255);
-            doc.text("Documento generado automáticamente por el sistema", 60, 294);
+            doc.text("Creado por Kevin E. Saez (2025) © https://kevinsaezdev.netlify.app", 60, 294);
 
             // Ocultar barra y descargar PDF
             document.getElementById("progressContainer").style.display = "none";
